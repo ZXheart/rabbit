@@ -1,5 +1,9 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
 dependencies:
   '@dcloudio/uni-app':
     specifier: 3.0.0-alpha-3080120230428001
@@ -40,9 +44,15 @@ dependencies:
   '@dcloudio/uni-quickapp-webview':
     specifier: 3.0.0-alpha-3080120230428001
     version: 3.0.0-alpha-3080120230428001(postcss@8.4.23)(vue@3.2.45)
+  '@dcloudio/uni-ui':
+    specifier: ^1.4.28
+    version: 1.4.28
   pinia:
     specifier: ^2.0.27
     version: 2.0.35(typescript@4.9.3)(vue@3.2.45)
+  pinia-plugin-persistedstate:
+    specifier: ^3.2.0
+    version: 3.2.0(pinia@2.0.35)
   vue:
     specifier: ^3.2.45
     version: 3.2.45
@@ -72,6 +82,9 @@ devDependencies:
   '@types/node':
     specifier: ^18.11.9
     version: 18.11.10
+  '@types/wechat-miniprogram':
+    specifier: ^3.4.1
+    version: 3.4.1
   '@uni-helper/uni-app-types':
     specifier: ^0.5.7
     version: 0.5.7(typescript@4.9.3)
@@ -1783,6 +1796,10 @@ packages:
       - vue
     dev: false
 
+  /@dcloudio/uni-ui@1.4.28:
+    resolution: {integrity: sha512-e/lSbvR79KH9+d3D4ueNbvD6szigjO/5IyjBNmiTqaj0PTS324fBV3L6f3s1qpkYonM4rdOl000hVOcAg6Gh/A==}
+    dev: false
+
   /@dcloudio/vite-plugin-uni@3.0.0-alpha-3080120230428001(postcss@8.4.23)(vite@4.0.3)(vue@3.2.45):
     resolution: {integrity: sha512-t/+gMHrPZt/TWN9FRZIh1IT1q65+WyEyznBKaWn61XhDMh+loQKpzypWlqgNLkZyHjDpFVfPlo4Cc6J1nA8ULA==}
     engines: {node: ^14.18.0 || >=16.0.0}
@@ -3062,6 +3079,10 @@ packages:
 
   /@types/stack-utils@2.0.1:
     resolution: {integrity: sha512-Hl219/BT5fLAaz6NDkSuhzasy49dwQS/DSdu4MdggFB8zcXv7vflBI3xp7FEmkmdDkBUI2bPUNeMttp2knYdxw==}
+    dev: true
+
+  /@types/wechat-miniprogram@3.4.1:
+    resolution: {integrity: sha512-szbuYR32VotxNQNQ4YyQ6Ob3ya0tLY0zpf/xvi6DF8Oqb+0Y+5CL5BpxS+4wBSJvlu3VfSXhjxZ0ze1a3l16Pw==}
     dev: true
 
   /@types/yargs-parser@21.0.0:
@@ -6329,6 +6350,14 @@ packages:
     resolution: {integrity: sha512-udgsAY+fTnvv7kI7aaxbqwWNb0AHiB0qBO89PZKPkoTmGOgdbrHDKD+0B2X4uTfJ/FT1R09r9gTsjUjNJotuog==}
     engines: {node: '>=0.10.0'}
 
+  /pinia-plugin-persistedstate@3.2.0(pinia@2.0.35):
+    resolution: {integrity: sha512-tZbNGf2vjAQcIm7alK40sE51Qu/m9oWr+rEgNm/2AWr1huFxj72CjvpQcIQzMknDBJEkQznCLAGtJTIcLKrKdw==}
+    peerDependencies:
+      pinia: ^2.0.0
+    dependencies:
+      pinia: 2.0.35(typescript@4.9.3)(vue@3.2.45)
+    dev: false
+
   /pinia@2.0.35(typescript@4.9.3)(vue@3.2.45):
     resolution: {integrity: sha512-P1IKKQWhxGXiiZ3atOaNI75bYlFUbRxtJdhPLX059Z7+b9Z04rnTZdSY8Aph1LA+/4QEMAYHsTQ638Wfe+6K5g==}
     peerDependencies:
@@ -7352,6 +7381,7 @@ packages:
 
   /w3c-hr-time@1.0.2:
     resolution: {integrity: sha512-z8P5DvDNjKDoFIHK7q8r8lackT6l+jo/Ye3HOle7l9nICP9lf1Ci25fy9vHd0JOWewkIFzXIEig3TdKT7JQ5fQ==}
+    deprecated: Use your platform's native performance.now() and performance.timeOrigin.
     dependencies:
       browser-process-hrtime: 1.0.0
     dev: true

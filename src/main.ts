@@ -1,7 +1,10 @@
 import { createSSRApp } from 'vue'
-import pinia from './stores'
-
+import { createPinia } from 'pinia'
+import persist from 'pinia-plugin-persistedstate'
 import App from './App.vue'
+
+const pinia = createPinia()
+pinia.use(persist)
 export function createApp() {
   const app = createSSRApp(App)
 
