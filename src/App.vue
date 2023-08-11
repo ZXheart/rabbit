@@ -15,7 +15,16 @@ onHide(() => {
 <style lang="scss">
 // 字体图标
 @import '@/styles/fonts.scss';
-
+/* #ifdef H5 || MP-WEIXIN*/
+::-webkit-scrollbar {
+  display: none;
+  width: 0 !important;
+  height: 0 !important;
+  -webkit-appearance: none;
+  background: transparent;
+  color: transparent;
+}
+/* #endif */
 view,
 navigator,
 input,

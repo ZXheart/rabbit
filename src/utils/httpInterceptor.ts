@@ -1,5 +1,6 @@
 import { useMemberStore } from '@/stores'
 
+// request interceptor
 const BASE_URL = 'https://pcapi-xiaotuxian-front-devtest.itheima.net'
 const httpInterceptor = {
   invoke(options: UniApp.RequestOptions) {
@@ -9,7 +10,6 @@ const httpInterceptor = {
       ...options.header,
       'source-client': 'miniapp',
     }
-    console.log(options)
     const memberStore = useMemberStore()
     const token = memberStore.profile?.token
     token && (options.header.Authorization = token)
@@ -19,6 +19,7 @@ const httpInterceptor = {
 uni.addInterceptor('request', httpInterceptor)
 uni.addInterceptor('uploadFile', httpInterceptor)
 
+// repack network request
 type Data<T> = {
   code: string
   msg: string
@@ -28,6 +29,7 @@ export const myRequest = <T>(options: UniApp.RequestOptions) => {
   return new Promise<Data<T>>((resolve, reject) => {
     uni.request({
       ...options,
+      method: options.method || 'GET',
       success(res) {
         if (res.statusCode >= 200 && res.statusCode < 300) {
           resolve(res.data as Data<T>)
