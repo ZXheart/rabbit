@@ -1,10 +1,9 @@
-import type {
-  pageParamsType,
+import { IParams, IPageItems } from '@/types/global'
+import {
   BannerType,
   CategoryType,
-  GuessLikeType,
-  GuessLikeItemType,
   HotRecommendType,
+  IGuessLikeGoodsItems,
 } from '@/types/home'
 import { myRequest } from '@/utils/httpInterceptor'
 // A. home bannerList
@@ -30,8 +29,8 @@ export const fetchHomeHotRecommend = () => {
   })
 }
 // D. home guessLike
-export const fetchHomeGuessLike = (options?: pageParamsType) => {
-  return myRequest<GuessLikeType<GuessLikeItemType>>({
+export const fetchHomeGuessLike = (options?: IParams) => {
+  return myRequest<IPageItems<IGuessLikeGoodsItems>>({
     url: '/home/goods/guessLike',
     data: {
       ...options,

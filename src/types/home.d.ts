@@ -1,43 +1,28 @@
-// A.
+import { IGoodsItems } from './global'
+// A.banner图
 export type BannerType = {
   hrefUrl: string
   id: string
   imgUrl: string
   type: number
 }
-// B.
+// B. banner图下边 分类
 export type CategoryType = {
   id: string
   name: string
   icon: string
 }
-// C.
+// C. 分类下边 四大金刚
 export type HotRecommendType = {
   id: string
-  pictures: Array<string>
-  title: string
   alt: string
+  pictures: Array<string>
   target: string
+  title: string
   type: string
 }
-// D.
-export type pageParamsType = {
-  page?: number
-  pageSize?: number
-}
-export type GuessLikeType<T> = {
-  counts: number //总条数
-  pageSize: number //每页条数
-  pages: number //总页数
-  page: number //当前页数
-  items: T[] //当前页数据
-}
-export type GuessLikeItemType = {
-  id: string
-  name: string //商品名称
-  desc: string //商品描述
-  price: number //商品价格
-  picture: string //商品图片
+// D. 四大金刚下边 猜你喜欢的商品items（page在global里边）
+export interface IGuessLikeGoodsItems extends IGoodsItems {
   discount: number //商品折扣
   orderNum: number //已下单数
 }

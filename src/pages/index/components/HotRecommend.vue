@@ -2,11 +2,17 @@
 import { HotRecommendType } from '@/types/home'
 
 defineProps<{ hotRecommendList: HotRecommendType[] }>()
+
+const toHotDetails = (item: HotRecommendType) => {
+  uni.navigateTo({
+    url: `/pages/hot-details/hot-details?type=${item.type}`,
+  })
+}
 </script>
 <template>
   <view class="hot-recommend">
     <template v-for="item in hotRecommendList" :key="item.id">
-      <view class="hot-item">
+      <view class="hot-item" @click="toHotDetails(item)">
         <view class="item-top">
           <text class="title">{{ item.title }}</text>
           <text class="sub-title">{{ item.alt }}</text>

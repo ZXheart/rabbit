@@ -99,9 +99,7 @@ onMounted(() => {})
 
 <style lang="scss">
 page {
-  // :deep(.uni-scroll-view::-webkit-scrollbar) {
-  //   display: none;
-  // }
+  //
   background-color: #f7f7f7;
   height: 100%;
 }

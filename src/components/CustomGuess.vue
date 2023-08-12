@@ -1,14 +1,15 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 
-import { GuessLikeItemType, pageParamsType } from '@/types/home'
+import { IParams } from '@/types/global'
+import { IGuessLikeGoodsItems } from '@/types/home'
 import { fetchHomeGuessLike } from '@/services'
 // state
-const guessLikeItemList = ref<GuessLikeItemType[]>([])
+const guessLikeItemList = ref<IGuessLikeGoodsItems[]>([])
 const isLoading = ref(false)
 const noMoreData = ref(false)
 // network requests
-const pageParams: Required<pageParamsType> = {
+const pageParams: Required<IParams> = {
   page: 1,
   pageSize: 10,
 }
@@ -33,7 +34,6 @@ onMounted(() => {
 })
 defineExpose({ isLoading, resetData, getMore: getHomeGuessLike })
 </script>
-
 <template>
   <view class="caption">
     <text class="text">猜你喜欢</text>

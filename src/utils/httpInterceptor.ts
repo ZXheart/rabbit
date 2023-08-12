@@ -2,6 +2,7 @@ import { useMemberStore } from '@/stores'
 
 // request interceptor
 const BASE_URL = 'https://pcapi-xiaotuxian-front-devtest.itheima.net'
+// const BASE_URL_BACKUP = 'https://apipc-xiaotuxian-front.itheima.net/'
 const httpInterceptor = {
   invoke(options: UniApp.RequestOptions) {
     !options.url.startsWith('http') && (options.url = BASE_URL + options.url)
