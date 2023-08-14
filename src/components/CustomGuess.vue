@@ -28,7 +28,7 @@ const resetData = () => {
   guessLikeItemList.value = []
   noMoreData.value = false
 }
-// local API
+// lifecycle
 onMounted(() => {
   getHomeGuessLike()
 })

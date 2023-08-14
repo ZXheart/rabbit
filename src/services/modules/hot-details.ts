@@ -1,7 +1,7 @@
 import { myRequest } from '@/utils/httpInterceptor'
-import { IHotParams, ISuperType } from '@/types/hot-details'
+import { IHotParams, ISuper } from '@/types/hot-details'
 export const fetchHotDetails = (hotURL: string, options?: IHotParams) => {
-  return myRequest<ISuperType>({
+  return myRequest<ISuper>({
     url: hotURL,
     data: options,
   })

@@ -8,7 +8,7 @@ import {
 import { myRequest } from '@/utils/httpInterceptor'
 // A. home bannerList
 // distributionSite integer 可选 1为首页（默认值） 2为商品分类页
-export const fetchHomeBanner = (distributionSite = 1) => {
+export const fetchBanner = (distributionSite = 1) => {
   return myRequest<BannerType[]>({
     url: '/home/banner',
     data: {

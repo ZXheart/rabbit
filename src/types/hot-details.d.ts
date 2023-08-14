@@ -7,17 +7,17 @@ export interface IHotParams extends IParams {
 }
 
 // 超集
-export interface ISuperType {
+export interface ISuper {
   title: string
   id: string
   bannerPicture: string
-  subTypes: ISubType[]
+  subTypes: ISub[]
 }
 // 子集
-export interface ISubType {
+export interface ISub {
   id: string
   title: string
-  goodsItems: IPageItems<IGoodsItems[]>
+  goodsItems: IPageItems<IGoodsItems>
 }
 // 子集下goods （在global）
 // goods下items （在global）

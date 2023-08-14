@@ -1,19 +1,19 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
-
-import { CustomGuessInstance } from '@/types/components'
-
+// vue components
 import CustomNavbar from './components/CustomNavbar.vue'
 import Category from './components/Category.vue'
 import HotRecommend from './components/HotRecommend.vue'
 import IndexSkeleton from './components/IndexSkeleton.vue'
-
+// network request
 import {
-  fetchHomeBanner,
+  fetchBanner,
   fetchHomeCategory,
   fetchHomeHotRecommend,
 } from '@/services'
+// type
+import { CustomGuessInstance } from '@/types/components'
 import { BannerType, CategoryType, HotRecommendType } from '@/types/home'
 
 // define state
@@ -27,7 +27,7 @@ const showSkeleton = ref(false)
 
 // fetch network data
 const getHomeBanner = async () => {
-  const res = await fetchHomeBanner()
+  const res = await fetchBanner()
   bannerList.value = res.result
 }
 const getHomeCategory = async () => {
@@ -40,7 +40,7 @@ const getHomeHotRecommend = async () => {
 }
 
 // custom events
-const onReachBottom = () => {
+const reachBottom = () => {
   customGuessRef.value.isLoading = true
   customGuessRef.value.getMore().then(() => {
     customGuessRef.value.isLoading = false
@@ -71,7 +71,6 @@ onLoad(() => {
     },
   )
 })
-onMounted(() => {})
 </script>
 
 <template>
@@ -83,7 +82,7 @@ onMounted(() => {})
       refresher-enabled
       enable-back-to-top
       :refresher-triggered="isTriggered"
-      @scrolltolower="onReachBottom"
+      @scrolltolower="reachBottom"
       @refresherrefresh="onRefresh"
     >
       <IndexSkeleton v-if="showSkeleton" />

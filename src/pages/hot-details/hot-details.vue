@@ -1,69 +1,115 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, Ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 
 import { fetchHotDetails } from '@/services'
-import { IHotParams, ISuperType } from '@/types/hot-details'
+import { IHotParams, ISuper } from '@/types/hot-details'
 
+// state
 const hotMap = [
   { type: '1', title: '特惠推荐', url: '/hot/preference' },
   { type: '2', title: '爆款推荐', url: '/hot/inVogue' },
   { type: '3', title: '一站买全', url: '/hot/oneStop' },
   { type: '4', title: '新鲜好物', url: '/hot/new' },
 ]
-const currentHotData = ref<ISuperType>()
-
+const currentURL = ref('')
+const hotData: Ref<ISuper> = ref(null)
+const currentTabIndex = ref(0)
+const scrollTop = ref(0)
 const hotPageParams: IHotParams = {
   page: 1,
   pageSize: 10,
 }
-const getHotDetails = async (hotURL: string, options: IHotParams) => {
-  const res = await fetchHotDetails(hotURL)
-  currentHotData.value = res.result
-}
+const isLoading = ref(false)
+const noMoreData = ref(false)
 
+// fetch network data
+const getHotDetails = async (hotURL: string, hotPageParams: IHotParams) => {
+  if (noMoreData.value) {
+    return uni.showToast({ icon: 'none', title: '没有更多数据~' })
+  }
+  const res = await fetchHotDetails(hotURL, hotPageParams)
+  const goodsItems = res.result.subTypes[currentTabIndex.value].goodsItems
+  // 如果第一次获取请求数据，将请求回来的整个对象赋值根hotData。否则将新数据push进已有items数组
+  if (!hotData.value) hotData.value = res.result
+  else {
+    hotData.value.subTypes.forEach((item, index) => {
+      item.goodsItems.items.push(...res.result.subTypes[index].goodsItems.items)
+    })
+  }
+  // 如果当前页码小于总页码，继续请求。反之设置没有更多数据
+  if (hotPageParams.page < goodsItems.pages) hotPageParams.page++
+  else noMoreData.value = true
+}
+// custom events
+const switchTab = (index: number) => {
+  currentTabIndex.value = index
+  // 切换tab栏期望回到顶部时，需要让scroll-top发生变化。如果没有发生变化
+  // 如同官方的描述： `当重复设置某些属性为相同的值时，不会同步到view层`
+  scrollTop.value = scrollTop.value + 0.01
+}
+const reachBottom = async () => {
+  isLoading.value = true
+  await getHotDetails(currentURL.value, hotPageParams)
+  isLoading.value = false
+}
+// lifecycle
 onLoad((options) => {
   const type = options.type
   const currentItem = hotMap.find((item) => item.type === type)
   const currentTitle = currentItem.title
-  const currentURL = currentItem.url
+  currentURL.value = currentItem.url
   uni.setNavigationBarTitle({ title: currentTitle })
-  getHotDetails(currentURL, hotPageParams)
+  getHotDetails(currentURL.value, hotPageParams)
 })
 </script>
 
 <template>
-  <view class="viewport">
+  <view class="viewport" v-if="hotData">
     <view class="cover">
-      <image class="cover-img" :src="currentHotData.bannerPicture"></image>
+      <image class="cover-img" :src="hotData.bannerPicture"></image>
     </view>
     <view class="tabs">
-      <template v-for="item in currentHotData.subTypes" :key="item.id">
-        <text class="text active">{{ item.title }}</text>
+      <template v-for="(item, index) in hotData.subTypes" :key="item.id">
+        <text
+          class="text"
+          :class="{ active: currentTabIndex === index }"
+          @click="switchTab(index)"
+        >
+          {{ item.title }}
+        </text>
       </template>
-      <!-- <text class="text">新品预告</text> -->
     </view>
-    <scroll-view scroll-y class="scroll-view">
+    <scroll-view
+      class="scroll-view"
+      scroll-y
+      :scroll-top="scrollTop"
+      @scrolltolower="reachBottom"
+    >
       <view class="goods">
-        <!-- v-for="(goods, index) in currentHotData.subTypes[index].goodsItems.items"
-          :key="goods" -->
         <navigator
+          v-for="goodsItem in hotData.subTypes[currentTabIndex].goodsItems
+            .items"
+          :key="goodsItem.id"
           hover-class="none"
           class="navigator"
           :url="`/pages/goods/goods?id=`"
         >
-          <image
-            class="thumb"
-            src="https://yanxuan-item.nosdn.127.net/5e7864647286c7447eeee7f0025f8c11.png"
-          ></image>
-          <view class="name ellipsis">不含酒精，使用安心爽肤清洁湿巾</view>
+          <image class="thumb" :src="goodsItem.picture"></image>
+          <view class="name ellipsis">{{ goodsItem.name }}</view>
           <view class="price">
             <text class="symbol">¥</text>
-            <text class="number">29.90</text>
+            <text class="number">{{ goodsItem.price }}</text>
           </view>
         </navigator>
       </view>
-      <view class="loading-text">正在加载...</view>
+      <!-- <view class="loading-text">正在加载...</view> -->
+      <uni-load-more
+        v-show="isLoading && !noMoreData"
+        iconType="auto"
+        status="loading"
+      />
+      <uni-load-more v-if="noMoreData" iconType="auto" status="noMore" />
     </scroll-view>
   </view>
 </template>
@@ -157,12 +203,5 @@ page {
   .decimal {
     font-size: 70%;
   }
-}
-
-.loading-text {
-  text-align: center;
-  font-size: 28rpx;
-  color: #666;
-  padding: 20rpx 0 50rpx;
 }
 </style>
