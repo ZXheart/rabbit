@@ -43,7 +43,7 @@ defineExpose({ isLoading, resetData, getMore: getHomeGuessLike })
       class="guess-item"
       v-for="item in guessLikeItemList"
       :key="item.id"
-      :url="`/pages/goods/goods?id=${item.id}`"
+      :url="`/pages/goods-details/goods-details?id=${item.id}`"
     >
       <image class="image" mode="widthFix" :src="item.picture"></image>
       <view class="name">

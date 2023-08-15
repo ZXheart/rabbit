@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, Ref } from 'vue'
+import { ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 // network request
 import { fetchBanner } from '@/services'
@@ -12,6 +12,7 @@ const bannerList = ref<BannerType[]>([])
 const categoriesList = ref<ICategoryPrimary[]>([])
 
 const currentPrimaryIndex = ref(0)
+const scrollTop = ref(0)
 // fetch network data
 const getCategoryBanner = async (distributionSite: number) => {
   const res = await fetchBanner(distributionSite)
@@ -24,6 +25,7 @@ const getCategory = async () => {
 // custom events
 const switchPrimaryTab = (index: number) => {
   currentPrimaryIndex.value = index
+  scrollTop.value += 0.01
 }
 // lifecycle events
 onLoad(() => {
@@ -56,6 +58,7 @@ onLoad(() => {
       <scroll-view
         class="secondary"
         scroll-y
+        :scroll-top="scrollTop"
         v-if="categoriesList[currentPrimaryIndex]"
       >
         <CustomSwiper class="banner" :bannerList="bannerList" />
