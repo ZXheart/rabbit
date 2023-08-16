@@ -1,17 +1,20 @@
+import { ref, Ref } from 'vue'
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+
+import { IMemberInfo } from '@/types/member-info'
 
 export const useMemberStore = defineStore(
   'member',
   () => {
     // state
-    const profile = ref<any>()
+    const profile: Ref<IMemberInfo> = ref()
+
     // actions
-    const setProfile = (val: any) => {
+    const setProfile = (val: IMemberInfo) => {
       profile.value = val
     }
     const clearProfile = () => {
-      profile.value = undefined
+      profile.value = null
     }
 
     return {

@@ -2,6 +2,7 @@
 import { ref, Ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 
+import AddressService from './components/AddressService.vue'
 import { fetchGoodsDetails } from '@/services'
 import { IGoodsResult } from '@/types/goods-details'
 
@@ -11,31 +12,34 @@ const props = defineProps<{ id: string }>()
 const goodsDetails: Ref<IGoodsResult> = ref(null)
 const currentPictureIndex = ref(1)
 const popupRef: Ref<UniHelper.UniPopupProps> = ref()
+const openType: Ref<'address' | 'service'> = ref()
 // network request
-const getGoodsDetails = async (goodsId: number) => {
-  const res = await fetchGoodsDetails(goodsId)
-  console.log(res)
-  goodsDetails.value = res.result
+const getGoodsDetails = async (goodsId: string) => {
+  const { result } = await fetchGoodsDetails(goodsId)
+  goodsDetails.value = result
 }
 
 // custom events
 const onChange: UniHelper.SwiperOnChange = (e) => {
   currentPictureIndex.value = e.detail.current + 1
 }
-const showChoose = () => {
+const openSpecs = () => {
   console.log(666)
 }
-const showAddress = () => {}
-const openService = () => {
-  popupRef.value.open('bottom')
+const openAddress = () => {
+  popupRef.value.open()
+  openType.value = 'address'
 }
-const close = () => {
+const openService = () => {
+  popupRef.value.open()
+  openType.value = 'service'
+}
+const closePanel = () => {
   popupRef.value.close()
 }
 // lifecycle
 onLoad(() => {
-  getGoodsDetails(4000914)
-  console.log(props.id)
+  getGoodsDetails(props.id)
 })
 </script>
 
@@ -73,11 +77,11 @@ onLoad(() => {
 
       <!-- 操作面板 -->
       <view class="action">
-        <view class="item arrow" @click="showChoose">
+        <view class="item arrow" @click="openSpecs">
           <text class="label">选择</text>
           <text class="text ellipsis"> 请选择商品规格 </text>
         </view>
-        <view class="item arrow" @click="showAddress">
+        <view class="item arrow" @click="openAddress">
           <text class="label">送至</text>
           <text class="text ellipsis"> 请选择收获地址 </text>
         </view>
@@ -87,7 +91,6 @@ onLoad(() => {
         </view>
       </view>
     </view>
-
     <!-- 商品详情 -->
     <view class="detail panel">
       <view class="title">
@@ -164,6 +167,11 @@ onLoad(() => {
     </view>
   </view>
   <!-- 弹出层 -->
+  <view class="popup">
+    <uni-popup ref="popupRef" type="bottom">
+      <AddressService :openType="openType" @close-panel="closePanel" />
+    </uni-popup>
+  </view>
 </template>
 
 <style lang="scss">
