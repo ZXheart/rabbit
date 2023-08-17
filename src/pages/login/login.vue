@@ -32,7 +32,7 @@ const onLogin = async () => {
     title: '登录成功',
     success() {
       setTimeout(() => {
-        uni.navigateBack()
+        uni.switchTab({ url: '/pages/my/my' })
       }, 500)
     },
   })

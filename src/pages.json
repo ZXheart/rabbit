@@ -55,6 +55,20 @@
       "style": {
         "navigationBarTitleText": "商品详情"
       }
+    },
+    {
+      "path": "setting-pages/common-settings/common-settings",
+      "style": {
+        "navigationBarTitleText": "通用设置"
+      }
+    },
+    {
+      "path": "setting-pages/profile-settings/profile-settings",
+      "style": {
+        "navigationBarTitleText": "个人信息设置",
+        "navigationStyle": "custom",
+        "navigationBarTextStyle": "white"
+      }
     }
   ],
   "globalStyle": {
@@ -95,5 +109,11 @@
         "selectedIconPath": "static/tabs/user_selected.png"
       }
     ]
+  },
+  "preloadRule": {
+    "pages/my/my": {
+      "network": "all",
+      "packages": ["setting-pages"]
+    }
   }
 }

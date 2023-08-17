@@ -2,15 +2,14 @@
 import { ref, Ref, toRefs } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 
+import { useReachBottom } from '@/hooks'
 import { useMemberStore } from '@/stores'
-import { CustomGuessInstance } from '@/types/components'
 
 const { profile } = toRefs(useMemberStore())
 const { setProfile, clearProfile } = useMemberStore()
 
 const { safeAreaInsets } = uni.getSystemInfoSync()
 
-const customGuessRef: Ref<CustomGuessInstance> = ref()
 // 订单选项
 const orderTypes = [
   { type: 1, text: '待付款', icon: 'icon-currency' },
@@ -26,16 +25,9 @@ const clear = () => {
   clearProfile()
 }
 // custom events
-const reachBottom = () => {
-  customGuessRef.value.isLoading = true
-  customGuessRef.value.getMore().then(() => {
-    customGuessRef.value.isLoading = false
-  })
-}
+const { reachBottom, customGuessRef } = useReachBottom()
 // lifecycle
-onLoad(() => {
-  console.log(profile.value)
-})
+onLoad(() => {})
 </script>
 <template>
   <scroll-view
@@ -49,14 +41,19 @@ onLoad(() => {
     <view class="profile" :style="{ paddingTop: safeAreaInsets!.top + 'px' }">
       <!-- 1：已登录 -->
       <view class="overview" v-if="profile">
-        <navigator url="/pagesMember/profile/profile" hover-class="none">
+        <navigator
+          url="/setting-pages/profile-settings/profile-settings"
+          hover-class="none"
+        >
           <image class="avatar" mode="aspectFill" :src="profile.avatar"></image>
         </navigator>
         <view class="meta">
-          <view class="nickname"> {{ profile.nickname }} </view>
+          <view class="nickname">
+            {{ profile.nickname || profile.account }}
+          </view>
           <navigator
             class="extra"
-            url="/pagesMember/profile/profile"
+            url="/setting-pages/profile-settings/profile-settings"
             hover-class="none"
           >
             <text class="update">更新头像昵称</text>
@@ -85,9 +82,10 @@ onLoad(() => {
           </view>
         </view>
       </view>
+      <!-- 3. 通用设置 -->
       <navigator
         class="settings"
-        url="/pagesMember/settings/settings"
+        url="/setting-pages/common-settings/common-settings"
         hover-class="none"
       >
         设置

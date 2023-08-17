@@ -30,7 +30,7 @@ const getHotDetails = async (hotURL: string, hotPageParams: IHotParams) => {
   }
   const res = await fetchHotDetails(hotURL, hotPageParams)
   const goodsItems = res.result.subTypes[currentTabIndex.value].goodsItems
-  // 如果第一次获取请求数据，将请求回来的整个对象赋值根hotData。否则将新数据push进已有items数组
+  // 第一次获取请求数据，将请求的整个对象赋值根hotData。否则将新数据push进已有items数组
   if (!hotData.value) hotData.value = res.result
   else {
     hotData.value.subTypes.forEach((item, index) => {
@@ -45,7 +45,7 @@ const getHotDetails = async (hotURL: string, hotPageParams: IHotParams) => {
 const switchTab = (index: number) => {
   currentTabIndex.value = index
   // 切换tab栏期望回到顶部时，需要让scroll-top发生变化。如果没有发生变化
-  // 如同官方的描述： `当重复设置某些属性为相同的值时，不会同步到view层`
+  // 则如同官方的描述： `当重复设置某些属性为相同的值时，不会同步到view层`
   scrollTop.value = scrollTop.value + 0.01
 }
 const reachBottom = async () => {

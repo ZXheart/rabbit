@@ -6,6 +6,8 @@ import CustomNavbar from './components/CustomNavbar.vue'
 import Category from './components/Category.vue'
 import HotRecommend from './components/HotRecommend.vue'
 import IndexSkeleton from './components/IndexSkeleton.vue'
+// hooks
+import { useReachBottom } from '@/hooks'
 // network request
 import {
   fetchBanner,
@@ -13,7 +15,6 @@ import {
   fetchHomeHotRecommend,
 } from '@/services'
 // type
-import { CustomGuessInstance } from '@/types/components'
 import { BannerType, CategoryType, HotRecommendType } from '@/types/home'
 
 // define state
@@ -21,7 +22,6 @@ const bannerList = ref<BannerType[]>([])
 const categoryList = ref<CategoryType[]>([])
 const hotRecommendList = ref<HotRecommendType[]>([])
 
-const customGuessRef = ref<CustomGuessInstance>()
 const isTriggered = ref(false)
 const showSkeleton = ref(false)
 
@@ -40,12 +40,7 @@ const getHomeHotRecommend = async () => {
 }
 
 // custom events
-const reachBottom = () => {
-  customGuessRef.value.isLoading = true
-  customGuessRef.value.getMore().then(() => {
-    customGuessRef.value.isLoading = false
-  })
-}
+const { customGuessRef, reachBottom } = useReachBottom()
 const onRefresh = () => {
   isTriggered.value = true
   // 1. isTriggered必须【先设置为true再改为false】才有资格触发关闭刷新

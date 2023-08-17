@@ -5,7 +5,7 @@ import {
   HotRecommendType,
   IGuessLikeGoodsItems,
 } from '@/types/home'
-import { myRequest } from '@/utils/httpInterceptor'
+import { myRequest } from '@/utils/http-interceptor'
 // A. home bannerList
 // distributionSite integer 可选 1为首页（默认值） 2为商品分类页
 export const fetchBanner = (distributionSite = 1) => {

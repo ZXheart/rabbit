@@ -79,7 +79,7 @@ onLoad(() => {
               :key="goods.id"
               class="goods"
               hover-class="none"
-              :url="`/pages/goods/goods?id=`"
+              :url="`/pages/goods-details/goods-details?id=${goods.id}`"
             >
               <image class="image" :src="goods.picture"></image>
               <view class="name ellipsis">{{ goods.name }}</view>
@@ -88,6 +88,7 @@ onLoad(() => {
                 <text class="number">{{ goods.price }}</text>
               </view>
             </navigator>
+            <!-- 下边这玩意用来将不足一排的item左对齐 -->
             <navigator
               url="/pages/"
               open-type="navigate"

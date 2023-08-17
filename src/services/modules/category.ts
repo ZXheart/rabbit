@@ -1,4 +1,4 @@
-import { myRequest } from '@/utils/httpInterceptor'
+import { myRequest } from '@/utils/http-interceptor'
 import { ICategoryPrimary } from '@/types/category'
 export const fetchCategory = () => {
   return myRequest<ICategoryPrimary[]>({
