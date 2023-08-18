@@ -41,10 +41,7 @@ onLoad(() => {})
     <view class="profile" :style="{ paddingTop: safeAreaInsets!.top + 'px' }">
       <!-- 1：已登录 -->
       <view class="overview" v-if="profile">
-        <navigator
-          url="/setting-pages/profile-settings/profile-settings"
-          hover-class="none"
-        >
+        <navigator url="/setting-pages/profile/profile" hover-class="none">
           <image class="avatar" mode="aspectFill" :src="profile.avatar"></image>
         </navigator>
         <view class="meta">
@@ -53,7 +50,7 @@ onLoad(() => {})
           </view>
           <navigator
             class="extra"
-            url="/setting-pages/profile-settings/profile-settings"
+            url="/setting-pages/profile/profile"
             hover-class="none"
           >
             <text class="update">更新头像昵称</text>
@@ -85,7 +82,7 @@ onLoad(() => {})
       <!-- 3. 通用设置 -->
       <navigator
         class="settings"
-        url="/setting-pages/common-settings/common-settings"
+        url="/setting-pages/common/common"
         hover-class="none"
       >
         设置

@@ -57,17 +57,29 @@
       }
     },
     {
-      "path": "setting-pages/common-settings/common-settings",
+      "path": "setting-pages/common/common",
       "style": {
         "navigationBarTitleText": "通用设置"
       }
     },
     {
-      "path": "setting-pages/profile-settings/profile-settings",
+      "path": "setting-pages/profile/profile",
       "style": {
         "navigationBarTitleText": "个人信息设置",
         "navigationStyle": "custom",
         "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "setting-pages/address/address",
+      "style": {
+        "navigationBarTitleText": "地址管理"
+      }
+    },
+    {
+      "path": "setting-pages/edit-address/edit-address",
+      "style": {
+        "navigationBarTitleText": "新增/修改地址"
       }
     }
   ],

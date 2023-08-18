@@ -9,17 +9,44 @@ import { IProfileDetails, GenderType } from '@/types/member-info'
 const { safeAreaInsets } = uni.getSystemInfoSync()
 const { profile } = toRefs(useMemberStore())
 const memberProfiles: Ref<IProfileDetails> = ref()
-
+const regionExecuted = ref(false)
 // network request
 const getProfiles = async () => {
   const { result } = await fetchProfiles()
-  console.log(result)
   memberProfiles.value = result
 }
 
 // custom events
+const getImgURL = (): Promise<string> => {
+  return new Promise((resolve) => {
+    uni.chooseMedia({
+      count: 1,
+      mediaType: ['image'],
+      success: (res) => {
+        resolve(res.tempFiles[0].tempFilePath)
+      },
+    })
+  })
+}
+const replaceAvatar = async () => {
+  const imgURL = await getImgURL()
+  const res = await uni.uploadFile({
+    url: '/member/profile/avatar',
+    name: 'file',
+    filePath: imgURL,
+  })
+  if (res.statusCode === 200) {
+    const { avatar } = JSON.parse(res.data).result
+    memberProfiles.value.avatar = avatar
+    profile.value.avatar = avatar
+    uni.showToast({ icon: 'success', title: '更新成功' })
+  } else {
+    uni.showToast({ icon: 'error', title: '更新失败' })
+  }
+}
+// 收集表单数据
 // 0. nickname 通过 v-model 绑定到 memberProfiles.nickname
-// 1. gender t通过 RadioGroupOnChang 事件绑定
+// 1. gender 通过 RadioGroupOnChang 事件绑定
 const chooseGender: UniHelper.RadioGroupOnChange = (e) => {
   memberProfiles.value.gender = e.detail.value as GenderType
 }
@@ -30,6 +57,7 @@ const chooseBirthday: UniHelper.DatePickerOnChange = (e) => {
 // 3. region 通过 RegionPickerOnChange 事件绑定
 const regionCode: [string, string, string] = ['', '', '']
 const chooseRegion: UniHelper.RegionPickerOnChange = (e) => {
+  regionExecuted.value = true
   const { value, code } = e.detail
   // .value是省市县组成的数组 - 用于前台展示
   memberProfiles.value.fullLocation = value.join(' ')
@@ -38,19 +66,26 @@ const chooseRegion: UniHelper.RegionPickerOnChange = (e) => {
   regionCode[1] = code[1]
   regionCode[2] = code[2]
 }
-// 4. 提交更改
+// 4. profession 通过 v-model 绑定到 memberProfiles.profession
+// 5. 提交更改
 const onSubmit = async () => {
   const { nickname, gender, birthday, profession } = memberProfiles.value
+  // 如果此次改动没有修改地址，那就不传regionCode。只有修改了地址才传regionCode
+  // 否则所有regionCode都是空，下次请求下来时地址将是空值，虽然并没修改过
+  const regionObj = regionExecuted.value
+    ? {
+        provinceCode: regionCode[0],
+        cityCode: regionCode[1],
+        countryCode: regionCode[2],
+      }
+    : null
   const { result } = await setProfiles({
     nickname,
     gender,
     birthday,
     profession,
-    provinceCode: regionCode[0],
-    cityCode: regionCode[1],
-    countryCode: regionCode[2],
+    ...regionObj,
   })
-  console.log(result)
   profile.value.nickname = result.nickname
   uni.showToast({ icon: 'none', title: '保存成功！' })
   setTimeout(() => {
@@ -76,7 +111,7 @@ onLoad(() => {
     </view>
     <!-- 头像 -->
     <view class="avatar">
-      <view class="avatar-content">
+      <view class="avatar-content" @click="replaceAvatar">
         <image class="image" :src="memberProfiles.avatar" mode="aspectFill" />
         <text class="text">点击修改头像</text>
       </view>
@@ -95,8 +130,7 @@ onLoad(() => {
             class="input"
             type="text"
             placeholder="请填写昵称"
-            :value="memberProfiles.nickname"
-            :v-model="memberProfiles.nickname"
+            v-model="memberProfiles.nickname"
           />
         </view>
         <view class="form-item">
@@ -156,7 +190,7 @@ onLoad(() => {
             class="input"
             type="text"
             placeholder="请填写职业"
-            :value="memberProfiles.profession"
+            v-model="memberProfiles.profession"
           />
         </view>
       </view>

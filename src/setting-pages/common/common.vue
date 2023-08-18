@@ -32,7 +32,7 @@ const logout = () => {
     <!-- 登陆状态显示 -->
     <view class="list" v-if="profile">
       <navigator
-        url="/setting-pages/address-settings/address-settings"
+        url="/setting-pages/address/address"
         hover-class="none"
         class="item arrow"
       >
