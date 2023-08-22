@@ -3,22 +3,30 @@ import { ref, Ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 
 import AddressService from './components/AddressService.vue'
-import { fetchGoodsDetails } from '@/services'
+import { fetchGoodsDetails, fetchAddressList } from '@/services'
 import { IGoodsResult } from '@/types/goods-details'
+import { IGetAddressList } from '@/types/address'
 
 const { safeAreaInsets } = uni.getSystemInfoSync()
 const props = defineProps<{ id: string }>()
+
 // define states
 const goodsDetails: Ref<IGoodsResult> = ref(null)
 const currentPictureIndex = ref(1)
 const popupRef: Ref<UniHelper.UniPopupProps> = ref()
 const openType: Ref<'address' | 'service'> = ref()
+
+const addressList = ref<IGetAddressList[]>([])
+
 // network request
 const getGoodsDetails = async (goodsId: string) => {
   const { result } = await fetchGoodsDetails(goodsId)
   goodsDetails.value = result
 }
-
+const getAddressList = async () => {
+  const { result } = await fetchAddressList()
+  addressList.value = result
+}
 // custom events
 const onChange: UniHelper.SwiperOnChange = (e) => {
   currentPictureIndex.value = e.detail.current + 1
@@ -37,9 +45,16 @@ const openService = () => {
 const closePanel = () => {
   popupRef.value.close()
 }
+const changeDefault = (e: string) => {
+  const index = addressList.value.findIndex((item) => item.id === e)
+  addressList.value.forEach((item) => (item.isDefault = 0))
+  addressList.value[index].isDefault = 1
+  setTimeout(() => closePanel(), 500)
+}
 // lifecycle
-onLoad(() => {
+onLoad(async () => {
   getGoodsDetails(props.id)
+  getAddressList()
 })
 </script>
 
@@ -162,14 +177,19 @@ onLoad(() => {
       </navigator>
     </view>
     <view class="buttons">
-      <view class="addcart"> 加入购物车 </view>
-      <view class="buynow"> 立即购买 </view>
+      <view class="add-cart"> 加入购物车 </view>
+      <view class="buy-now"> 立即购买 </view>
     </view>
   </view>
   <!-- 弹出层 -->
   <view class="popup">
     <uni-popup ref="popupRef" type="bottom">
-      <AddressService :openType="openType" @close-panel="closePanel" />
+      <AddressService
+        :openType="openType"
+        :addressList="addressList"
+        @close-panel="closePanel"
+        @change-default="changeDefault"
+      />
     </uni-popup>
   </view>
 </template>
@@ -423,10 +443,10 @@ page {
       color: #fff;
       border-radius: 72rpx;
     }
-    .addcart {
+    .add-cart {
       background-color: #ffa868;
     }
-    .buynow {
+    .buy-now {
       background-color: #27ba9b;
       margin-left: 20rpx;
     }

@@ -6,4 +6,8 @@ export interface IAddressParameters {
   countyCode: string //区/县编码
   address: string //详细地址
   isDefault: 0 | 1 //是否为默认。 1是 0否
+  fullLocation: string
+}
+export interface IGetAddressList extends IAddressParameters {
+  id: string
 }

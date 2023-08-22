@@ -5,12 +5,10 @@ defineProps<{ categoryList: CategoryType[] }>()
 </script>
 <template>
   <view class="category">
-    <template v-for="item in categoryList" :key="item.id">
-      <view class="category-item">
-        <image class="item-icon" :src="item.icon"></image>
-        <text class="item-title">{{ item.name }}</text>
-      </view>
-    </template>
+    <view class="category-item" v-for="item in categoryList" :key="item.id">
+      <image class="item-icon" :src="item.icon"></image>
+      <text class="item-title">{{ item.name }}</text>
+    </view>
   </view>
 </template>
 <style lang="scss">

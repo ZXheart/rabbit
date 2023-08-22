@@ -1,0 +1,16 @@
+{
+  "id": "",
+  "name": "",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "14731",
+      "name": "未选中",
+      "font_class": "weixuanzhong",
+      "unicode": "f02a8",
+      "unicode_decimal": 983720
+    }
+  ]
+}

@@ -1,31 +1,76 @@
 <script setup lang="ts">
-//
+import { ref } from 'vue'
+import { onLoad, onShow } from '@dcloudio/uni-app'
+
+import { IGetAddressList } from '@/types/address'
+import { fetchAddressList, deleteAddress } from '@/services'
+
+// define states
+const addressList = ref<IGetAddressList[]>([])
+const rightOptions = ref([
+  {
+    text: '删除',
+    style: { backgroundColor: '#f56C6C' },
+  },
+])
+
+// custom events
+const onDelete = async (id: string) => {
+  await deleteAddress(id).then((err) => console.log(err))
+  uni.showToast({ title: '删除成功', icon: 'success' })
+  addressList.value = addressList.value.filter((item) => item.id !== id)
+}
+
+onLoad(async () => {
+  const { result } = await fetchAddressList()
+  addressList.value = result
+})
+onShow(async () => {
+  const { result } = await fetchAddressList()
+  addressList.value = result
+})
 </script>
 
 <template>
   <view class="viewport">
     <!-- 地址列表 -->
     <scroll-view class="scroll-view" scroll-y>
-      <view v-if="false" class="address">
+      <view v-if="addressList" class="address">
         <view class="address-list">
           <!-- 收货地址项 -->
-          <view class="item">
-            <view class="item-content">
-              <view class="user">
-                黑马小王子
-                <text class="contact">13111111111</text>
-                <text v-if="true" class="badge">默认</text>
+          <uni-swipe-action>
+            <uni-swipe-action-item
+              :right-options="rightOptions"
+              @click="onDelete(item.id)"
+              v-for="item in addressList"
+              :key="item.id"
+            >
+              <view class="item">
+                <view class="item-content">
+                  <view class="user">
+                    {{ item.receiver }}
+                    <text class="contact">{{ item.contact }}</text>
+                    <text
+                      v-if="addressList.length === 1 || item.isDefault"
+                      class="badge"
+                    >
+                      默认
+                    </text>
+                  </view>
+                  <view class="locate">
+                    {{ item.fullLocation }} {{ item.address }}
+                  </view>
+                  <navigator
+                    class="edit"
+                    hover-class="none"
+                    :url="`/setting-pages/edit-address/edit-address?id=${item.id}`"
+                  >
+                    修改
+                  </navigator>
+                </view>
               </view>
-              <view class="locate">广东省 广州市 天河区 黑马程序员</view>
-              <navigator
-                class="edit"
-                hover-class="none"
-                :url="`/pagesMember/address-form/address-form?id=1`"
-              >
-                修改
-              </navigator>
-            </view>
-          </view>
+            </uni-swipe-action-item>
+          </uni-swipe-action>
         </view>
       </view>
       <view v-else class="blank">暂无收货地址</view>

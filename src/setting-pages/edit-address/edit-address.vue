@@ -1,21 +1,29 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { onLoad } from '@dcloudio/uni-app'
-import { addAddress } from '@/services'
+import { addAddress, fetchAddress, modifyAddress } from '@/services'
 import { IAddressParameters } from '@/types/address'
+import { onLoad } from '@dcloudio/uni-app'
 
 // 表单数据
 const form = ref<IAddressParameters>({
   receiver: '', // 收货人
   contact: '', // 联系方式
+  fullLocation: '', // 省市区(前端展示)
   provinceCode: '', // 省份编码(后端参数)
   cityCode: '', // 城市编码(后端参数)
   countyCode: '', // 区/县编码(后端参数)
   address: '', // 详细地址
   isDefault: 0, // 默认地址，1为是，0为否
 })
-const fullLocation = ref('') // 省市区(前端展示)
 const formHasNullValue = ref(true)
+const props = defineProps({
+  id: {
+    type: String,
+    default: '',
+  },
+})
+uni.setNavigationBarTitle({ title: props.id ? '修改地址' : '新建地址' })
+
 // custom events
 const checkFrom = () => {
   let hasNull = false
@@ -33,62 +41,47 @@ const inputDone = () => {
 }
 const chooseRegion: UniHelper.RegionPickerOnChange = (e) => {
   const { code, value } = e.detail
-  fullLocation.value = value.join(' ')
-  form.value.provinceCode = code[0]
-  form.value.cityCode = code[1]
-  form.value.countyCode = code[2]
+  form.value.fullLocation = value.join(' ')
+  const [provinceCode, cityCode, countyCode] = code
+  Object.assign(form.value, { provinceCode, cityCode, countyCode })
 }
 const chooseDefault: UniHelper.SwitchOnChange = (e) => {
-  e.detail.value ? (form.value.isDefault = 1) : (form.value.isDefault = 0)
+  form.value.isDefault = e.detail.value ? 1 : 0
 }
+// 新建 / 修改地址
 const onSave = async () => {
-  addAddress({
-    receiver: '文霞',
-    contact: '18888888888',
-    provinceCode: '110000',
-    cityCode: '110100',
-    countyCode: '110105',
-    address: '文霞',
-    isDefault: 0,
-  }).then((res) => console.log(res))
-  // uni.showLoading({
-  //   title: '正在提交',
-  // })
-  // const { ...formParameters } = form.value
-  // console.log(formParameters)
-  // const res = await addAddress(formParameters)
-  // console.log(res)
-  // uni.hideLoading()
-  // uni.showToast({
-  //   title: '保存成功',
-  //   icon: 'none',
-  // })
+  uni.showLoading({ title: '正在提交' })
+  let res: any
+  if (props.id) {
+    res = await modifyAddress(props.id, form.value).catch((err) => {
+      uni.hideLoading()
+      uni.showToast({ title: err, icon: 'error' })
+    })
+  } else {
+    res = await addAddress(form.value).catch((err) => {
+      uni.hideLoading()
+      uni.showToast({ title: err, icon: 'error' })
+    })
+  }
+  if (!res) return
+  uni.hideLoading()
+  uni
+    .showToast({
+      title: props.id ? '修改成功' : '保存成功',
+      icon: 'success',
+    })
+    .then(() => {
+      uni.navigateBack()
+    })
 }
-
-// uni.request({
-//   url: '/api/address/save',
-//   method: 'POST',
-//   data: form.value,
-//   success: (res) => {
-//     uni.hideLoading()
-//     uni.showToast({
-//       title: '添加成功',
-//       icon: 'none',
-//       duration: 2000,
-//     })
-//   },
-//   fail: (err) => {
-//     uni.hideLoading()
-//     uni.showToast({
-//       title: err.errMsg,
-//       icon: 'none',
-//       duration: 2000,
-//     })
-//   },
-// })
 
 // lifecycle.
-onLoad(() => {})
+onLoad(async () => {
+  if (props.id) {
+    const { result } = await fetchAddress(props.id)
+    Object.assign(form.value, result)
+  }
+})
 </script>
 
 <template>
@@ -117,8 +110,13 @@ onLoad(() => {})
       </view>
       <view class="form-item">
         <text class="label">所在地区</text>
-        <picker class="picker" mode="region" @change="chooseRegion">
-          <view v-if="fullLocation">广东省 广州市 天河区</view>
+        <picker
+          class="picker"
+          mode="region"
+          @change="chooseRegion"
+          :value="form.fullLocation.split(' ')"
+        >
+          <view v-if="form.fullLocation">{{ form.fullLocation }}</view>
           <view v-else class="placeholder">请选择省/市/区(县)</view>
         </picker>
       </view>
@@ -137,7 +135,7 @@ onLoad(() => {})
         <switch
           class="switch"
           color="#27ba9b"
-          :checked="form.isDefault"
+          :checked="form.isDefault === 1"
           @change="chooseDefault"
         />
       </view>

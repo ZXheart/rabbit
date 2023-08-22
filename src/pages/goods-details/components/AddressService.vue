@@ -1,12 +1,27 @@
 <script setup lang="ts">
-/*
- * @param
- */
-defineProps<{ openType: 'address' | 'service' }>()
-const emit = defineEmits<{ (event: 'closePanel'): void }>()
+import { ref } from 'vue'
+import { onShow } from '@dcloudio/uni-app'
+
+import { IGetAddressList } from '@/types/address'
+
+defineProps<{
+  openType: 'address' | 'service'
+  addressList?: IGetAddressList[]
+}>()
+const emit = defineEmits<{
+  (event: 'closePanel'): void
+  (event: 'changeDefault', id: string): void
+}>()
 const closePanel = () => {
   emit('closePanel')
 }
+const changeDefault = (id: string) => {
+  emit('changeDefault', id)
+}
+// define states
+
+// lifecycle
+onShow(() => {})
 </script>
 
 <template>
@@ -42,24 +57,26 @@ const closePanel = () => {
     <!-- 地址内容 -->
     <view class="address-content" v-if="openType === 'address'">
       <view class="address-items">
-        <view class="item">
-          <view class="user">李明 13824686868</view>
-          <view class="address">北京市顺义区后沙峪地区安平北街6号院</view>
-          <text class="icon icon-checked"></text>
-        </view>
-        <view class="item">
-          <view class="user">王东 13824686868</view>
-          <view class="address">北京市顺义区后沙峪地区安平北街6号院</view>
-          <text class="icon icon-ring"></text>
-        </view>
-        <view class="item">
-          <view class="user">张三 13824686868</view>
-          <view class="address">北京市朝阳区孙河安平北街6号院</view>
-          <text class="icon icon-ring"></text>
+        <view class="item" v-for="item in addressList" :key="item.id">
+          <view class="user">{{ item.receiver }} {{ item.contact }}</view>
+          <view class="address">{{ item.fullLocation }}{{ item.address }}</view>
+          <text v-if="item.isDefault" class="icon icon-checked"></text>
+          <text
+            v-else
+            class="icon iconfont icon-weixuanzhong"
+            @click="changeDefault(item.id)"
+          >
+          </text>
         </view>
       </view>
       <view class="footer">
-        <view class="button primary"> 新建地址 </view>
+        <navigator
+          class="button primary"
+          url="/setting-pages/edit-address/edit-address"
+          open-type="navigate"
+        >
+          新建地址
+        </navigator>
         <view v-if="false" class="button primary">确定</view>
       </view>
     </view>
@@ -67,6 +84,8 @@ const closePanel = () => {
 </template>
 
 <style lang="scss">
+@import url(../../../static/fonts/iconfont.css);
+
 .address-service {
   padding: 0 30rpx;
   border-radius: 10rpx 10rpx 0 0;
@@ -145,6 +164,11 @@ const closePanel = () => {
     position: absolute;
     top: 50%;
     right: 0;
+  }
+  .icon.iconfont {
+    font-size: 55rpx;
+    width: 47rpx;
+    height: 47rpx;
   }
   .icon-checked {
     color: #27ba9b;
