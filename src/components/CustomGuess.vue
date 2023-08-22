@@ -6,14 +6,21 @@ import { IGuessLikeGoodsItems } from '@/types/home'
 import { fetchHomeGuessLike } from '@/services'
 // state
 const guessLikeItemList = ref<IGuessLikeGoodsItems[]>([])
+// 是否正在显示底部Loading动画
 const isLoading = ref(false)
 const noMoreData = ref(false)
+// 是否正在请求数据
+const isRequesting = ref(false)
 // network requests
 const pageParams: Required<IParams> = {
   page: 1,
   pageSize: 10,
 }
 const getHomeGuessLike = async () => {
+  // 进入首页自动请求一次数据，请求过程中狂往上拉（触发触底事件）就会再次加载同一条数据
+  // 因为此时可能pageParams.page++动作还未执行，而导致多次请求同一数据
+  if (isRequesting.value) return
+  isRequesting.value = true
   if (noMoreData.value) {
     return uni.showToast({ icon: 'none', title: '没有更多数据~' })
   }
@@ -21,6 +28,8 @@ const getHomeGuessLike = async () => {
   guessLikeItemList.value.push(...res.result.items)
   if (pageParams.page < res.result.pages) pageParams.page++
   else noMoreData.value = true
+  // 完成一次请求之后将该值改为false
+  isRequesting.value = false
 }
 // custom API
 const resetData = () => {

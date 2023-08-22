@@ -3,9 +3,11 @@ import { ref, Ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 
 import AddressService from './components/AddressService.vue'
+import Specs from './components/Specs.vue'
 import { fetchGoodsDetails, fetchAddressList } from '@/services'
 import { IGoodsResult } from '@/types/goods-details'
 import { IGetAddressList } from '@/types/address'
+import { SpecsInstance } from '@/types/components'
 
 const { safeAreaInsets } = uni.getSystemInfoSync()
 const props = defineProps<{ id: string }>()
@@ -16,7 +18,9 @@ const currentPictureIndex = ref(1)
 const popupRef: Ref<UniHelper.UniPopupProps> = ref()
 const openType: Ref<'address' | 'service'> = ref()
 
-const addressList = ref<IGetAddressList[]>([])
+const addressList: Ref<IGetAddressList[]> = ref([])
+
+const specsRef: Ref<SpecsInstance> = ref()
 
 // network request
 const getGoodsDetails = async (goodsId: string) => {
@@ -32,7 +36,8 @@ const onChange: UniHelper.SwiperOnChange = (e) => {
   currentPictureIndex.value = e.detail.current + 1
 }
 const openSpecs = () => {
-  console.log(666)
+  specsRef.value.skuKey = true
+  specsRef.value.skuModeText = 'both'
 }
 const openAddress = () => {
   popupRef.value.open()
@@ -50,6 +55,14 @@ const changeDefault = (e: string) => {
   addressList.value.forEach((item) => (item.isDefault = 0))
   addressList.value[index].isDefault = 1
   setTimeout(() => closePanel(), 500)
+}
+const addCart = () => {
+  specsRef.value.skuKey = true
+  specsRef.value.skuModeText = 'cart'
+}
+const buyNow = () => {
+  specsRef.value.skuKey = true
+  specsRef.value.skuModeText = 'buy'
 }
 // lifecycle
 onLoad(async () => {
@@ -94,7 +107,7 @@ onLoad(async () => {
       <view class="action">
         <view class="item arrow" @click="openSpecs">
           <text class="label">选择</text>
-          <text class="text ellipsis"> 请选择商品规格 </text>
+          <text class="text ellipsis"> {{ specsRef?.selectArrText }}</text>
         </view>
         <view class="item arrow" @click="openAddress">
           <text class="label">送至</text>
@@ -177,13 +190,13 @@ onLoad(async () => {
       </navigator>
     </view>
     <view class="buttons">
-      <view class="add-cart"> 加入购物车 </view>
-      <view class="buy-now"> 立即购买 </view>
+      <view class="add-cart" @click="addCart"> 加入购物车 </view>
+      <view class="buy-now" @click="buyNow"> 立即购买 </view>
     </view>
   </view>
-  <!-- 弹出层 -->
+  <!-- 地址/服务弹出层 -->
   <view class="popup">
-    <uni-popup ref="popupRef" type="bottom">
+    <uni-popup ref="popupRef" type="bottom" :safe-area="false">
       <AddressService
         :openType="openType"
         :addressList="addressList"
@@ -191,6 +204,10 @@ onLoad(async () => {
         @change-default="changeDefault"
       />
     </uni-popup>
+  </view>
+  <!-- 规格弹出层 -->
+  <view class="SKU-popup" v-if="goodsDetails">
+    <Specs ref="specsRef" :goodsDetails="goodsDetails"></Specs>
   </view>
 </template>
 

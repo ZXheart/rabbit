@@ -11,19 +11,22 @@ const toHotDetails = (item: HotRecommendType) => {
 </script>
 <template>
   <view class="hot-recommend">
-    <template v-for="item in hotRecommendList" :key="item.id">
-      <view class="hot-item" @click="toHotDetails(item)">
-        <view class="item-top">
-          <text class="title">{{ item.title }}</text>
-          <text class="sub-title">{{ item.alt }}</text>
-        </view>
-        <view class="item-pics">
-          <template v-for="i in item.pictures" :key="i">
-            <image class="pic" :src="i" mode="widthFix" />
-          </template>
-        </view>
+    <view
+      class="hot-item"
+      v-for="item in hotRecommendList"
+      :key="item.id"
+      @click="toHotDetails(item)"
+    >
+      <view class="item-top">
+        <text class="title">{{ item.title }}</text>
+        <text class="sub-title">{{ item.alt }}</text>
       </view>
-    </template>
+      <view class="item-pics">
+        <template v-for="i in item.pictures" :key="i">
+          <image class="pic" :src="i" mode="widthFix" />
+        </template>
+      </view>
+    </view>
   </view>
 </template>
 <style lang="scss">
