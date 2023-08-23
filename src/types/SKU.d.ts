@@ -3,7 +3,7 @@ import { Component } from '@uni-helper/uni-app-types'
 /** SKU 弹出层 */
 export type SkuPopup = Component<SkuPopupProps>
 
-/** SKU 弹出层实例 */
+/* SKU 弹出层实例 */
 export type SkuPopupInstance = InstanceType<SkuPopup>
 
 /** SKU 弹出层属性 */
@@ -36,7 +36,7 @@ export type SkuPopupProps = {
   theme?: 'default' | 'red-black' | 'black-white' | 'coffee' | 'green'
   /** 默认金额会除以100（即100=1元），若设置为0，则不会除以100（即1=1元） */
   amountType?: 1 | 0
-  /** 自定义获取商品信息的函数（已知支付宝不支持，支付宝请改用localdata属性） */
+  /** 自定义获取商品信息的函数（已知支付宝不支持，支付宝请改用localData属性） */
   customAction?: () => void
   /** 是否显示右上角关闭按钮 */
   showClose?: boolean
@@ -79,7 +79,7 @@ export type SkuPopupProps = {
   /** 字段名 - 商品缩略图字段名(未选择sku时) */
   goodsThumbName?: string
   /** 被选中的值 */
-  selectArr?: Array<string>
+  selectArr?: any[]
 
   /** 打开弹出层 */
   onOpen: () => void

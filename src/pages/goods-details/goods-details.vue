@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, Ref } from 'vue'
+import { ref, Ref, computed } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 
 import AddressService from './components/AddressService.vue'
@@ -12,7 +12,7 @@ import { SpecsInstance } from '@/types/components'
 const { safeAreaInsets } = uni.getSystemInfoSync()
 const props = defineProps<{ id: string }>()
 
-// define states
+// * 1. define states
 const goodsDetails: Ref<IGoodsResult> = ref(null)
 const currentPictureIndex = ref(1)
 const popupRef: Ref<UniHelper.UniPopupProps> = ref()
@@ -22,7 +22,12 @@ const addressList: Ref<IGetAddressList[]> = ref([])
 
 const specsRef: Ref<SpecsInstance> = ref()
 
-// network request
+// * 2. computed
+const defaultAddress = computed(() => {
+  const defaultItem = addressList.value.find((item) => item.isDefault === 1)
+  return defaultItem?.fullLocation + defaultItem?.address || '请选择收获地址'
+})
+// * 3. network request
 const getGoodsDetails = async (goodsId: string) => {
   const { result } = await fetchGoodsDetails(goodsId)
   goodsDetails.value = result
@@ -31,7 +36,7 @@ const getAddressList = async () => {
   const { result } = await fetchAddressList()
   addressList.value = result
 }
-// custom events
+// * 4. custom events
 const onChange: UniHelper.SwiperOnChange = (e) => {
   currentPictureIndex.value = e.detail.current + 1
 }
@@ -64,7 +69,7 @@ const buyNow = () => {
   specsRef.value.skuKey = true
   specsRef.value.skuModeText = 'buy'
 }
-// lifecycle
+// * 5. lifecycle
 onLoad(async () => {
   getGoodsDetails(props.id)
   getAddressList()
@@ -111,7 +116,7 @@ onLoad(async () => {
         </view>
         <view class="item arrow" @click="openAddress">
           <text class="label">送至</text>
-          <text class="text ellipsis"> 请选择收获地址 </text>
+          <text class="text ellipsis"> {{ defaultAddress }} </text>
         </view>
         <view class="item arrow" @click="openService">
           <text class="label">服务</text>

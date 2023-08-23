@@ -2,26 +2,25 @@
 import { ref, Ref, computed, onMounted } from 'vue'
 import type { SkuPopupLocalData, SkuPopupInstance } from '@/types/SKU'
 import type { IGoodsResult } from '@/types/goods-details'
-
-// 获取商品详情信息
+// * 0. defineProps
 const props = defineProps<{
   goodsDetails: IGoodsResult
 }>()
-const skuRef: Ref<SkuPopupInstance> = ref()
 const res = props.goodsDetails
-// 是否显示SKU组件
-const skuKey = ref(false)
+// * 1. states
+const skuRef: Ref<SkuPopupInstance> = ref()
+const skuKey = ref(false) // 是否显示SKU组件
 // SKU组件 添加购物车/立即购买 显示模式 1：全显示2：只显示购物车3：只显示立即购买
 const skuMode = ref({ both: 1, cart: 2, buy: 3 })
 const skuModeText: Ref<'both' | 'cart' | 'buy'> = ref()
-// 商品信息
 const localData = ref({} as SkuPopupLocalData)
+// 选中商品的样式
 const activeStyle = ref({
   'background-color': 'rgba(53, 200, 169,.2)',
   color: '#27ba9b',
   'border-color': '#27ba9b',
 })
-// events
+// * 2. methods
 const getLocalData = () => {
   // SKU组件所需格式
   localData.value = {
@@ -40,11 +39,18 @@ const getLocalData = () => {
     })),
   }
 }
-// computed
+// * 3. computed
 const selectArrText = computed(() => {
-  return skuRef.value.selectArr || '请选择商品规格'
+  return skuRef.value.selectArr.join(' ') || '请选择商品规格'
 })
-// lifecycle
+// * 4. custom events
+const addCart = () => {
+  console.log('add')
+}
+const buyNow = () => {
+  console.log('buy')
+}
+// * 5. lifecycle
 onMounted(() => {
   getLocalData()
 })
@@ -67,6 +73,8 @@ defineExpose({
       add-cart-background-color="#ffa868"
       buy-now-background-color="#27ba9b"
       :actived-style="activeStyle"
+      @add-cart="addCart"
+      @buy-now="buyNow"
     />
   </view>
 </template>
